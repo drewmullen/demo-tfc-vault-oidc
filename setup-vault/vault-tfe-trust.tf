@@ -14,8 +14,7 @@ resource "vault_jwt_auth_backend_role" "vault_admin" {
   backend   = vault_jwt_auth_backend.tfc_jwt.path
   role_name = "app-team"
   token_policies = [
-    vault_policy.jwt_based_read.name,
-    vault_policy.self.name,
+    vault_policy.kv_read.name,
   ]
 
   bound_audiences = [
@@ -29,26 +28,9 @@ resource "vault_jwt_auth_backend_role" "vault_admin" {
   user_claim = "terraform_full_workspace"
   role_type  = "jwt"
   token_ttl  = 7200
-
-  claim_mappings = {
-    # "project_name" = "terraform_project_name"
-    # "workspace_name" = "terraform_workspace_name"
-    "terraform_project_name" = "project_name" 
-    "terraform_workspace_name" = "workspace_name"
-  }
 }
 
-resource "vault_policy" "jwt_based_read" {
-  name = "jwt_based_read"
-
-  policy = <<EOT
-path "kv/data/{{identity.entity.metadata.project_name}}/{{identity.entity.metadata.workspace_name}}/*" {
-  capabilities = ["read", "list"]
-}
-EOT
-}
-
-resource "vault_policy" "self" {
+resource "vault_policy" "kv_read" {
   name = "self"
 
   policy = <<EOT
@@ -66,17 +48,20 @@ path "auth/token/renew-self" {
 path "auth/token/revoke-self" {
     capabilities = ["update"]
 }
+
+path "kv/*" {
+  capabilities = ["read", "list", "create", "delete"]
+}
+
+path "gcp/roleset/project_viewer/token" {
+  capabilities = ["read", "list"]
+}
 EOT
 }
 
-# path "*" {
-#   capabilities = ["read", "list", "create", "delete"]
-# }
 resource "tfe_project_variable_set" "vault_admin_auth_role" {
   variable_set_id = tfe_variable_set.vault_admin.id
   project_id = tfe_project.demo.id
-#   name       = "demo-vault-oidc"
-#   description = "Variables for Vault Workload Identity integration for TFC runs."
 }
 
 resource "tfe_variable_set" "vault_admin" {
@@ -130,7 +115,7 @@ resource "tfe_variable" "tfc_vault_addr" {
   key       = "TFC_VAULT_ADDR"
   value     = var.vault_addr
   category  = "env"
-  sensitive = false
+  sensitive = true
 
   description = "The address of the Vault instance runs will access."
 }
