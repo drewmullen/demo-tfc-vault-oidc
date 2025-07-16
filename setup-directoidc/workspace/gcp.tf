@@ -29,7 +29,7 @@ provider "google" {
 resource "google_service_account" "test" {
   account_id   = "tfc-sa-test"
   display_name = "Terraform Cloud SA"
-  project = "tfc-oidc-464517" 
+  project = var.gcp_project_id
 }
 
 
