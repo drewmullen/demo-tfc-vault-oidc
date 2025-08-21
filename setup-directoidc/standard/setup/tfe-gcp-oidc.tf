@@ -53,7 +53,8 @@ resource "google_service_account_iam_binding" "tfc_binding" {
     join("/", [
       "principalSet://iam.googleapis.com/projects", data.google_project.project.number,
       "locations/global/workloadIdentityPools", google_iam_workload_identity_pool.tfc_pool.workload_identity_pool_id,
-      "attribute.terraform_workspace_name", "test-directoidc"
+      "attribute.terraform_project_name", "test-directoidc"
+      # "attribute.terraform_workspace_name", "test-directoidc"
       # "attribute.terraform_organization_name", var.org,
       # "attribute.terraform_workspace_id", "ws-hQBesPn3huhM8iPw"
     ]) 
