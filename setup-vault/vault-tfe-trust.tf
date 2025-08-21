@@ -23,6 +23,7 @@ resource "vault_jwt_auth_backend_role" "vault_admin" {
   bound_claims_type = "glob"
   bound_claims = {
     sub = "organization:${var.org}:project:${tfe_project.demo.name}:workspace:*:run_phase:*"
+    # sub = "organization:${var.org}:project:${tfe_project.demo.name}:workspace:dev-*:run_phase:*,organization:${var.org}:project:${tfe_project.demo.name}:workspace:test:run_phase:*"
   }
 
   user_claim = "terraform_full_workspace"
