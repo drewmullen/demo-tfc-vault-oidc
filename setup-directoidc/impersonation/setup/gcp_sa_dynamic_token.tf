@@ -25,11 +25,13 @@ resource "google_iam_workload_identity_pool_provider" "tfc_provider" {
     "attribute.terraform_organization_id"   = "assertion.terraform_organization_id"
     "attribute.terraform_organization_name" = "assertion.terraform_organization_name"
   }
+  
+  attribute_condition = "attribute.terraform_organization_name == 'mullen-hashi'"
 
-  attribute_condition = join(" ", [
-    "attribute.terraform_organization_id == \"mullen-hashi\" &&",
-    "attribute.terraform_project_name == \"tfe-gcp-oidc\""
-  ])
+  # attribute_condition = join(" ", [
+  #   "attribute.terraform_organization_id == \"mullen-hashi\" &&",
+  #   "attribute.terraform_project_name == \"tfe-gcp-oidc\""
+  # ])
 }
 
 # is this the audience? audience is the caller
