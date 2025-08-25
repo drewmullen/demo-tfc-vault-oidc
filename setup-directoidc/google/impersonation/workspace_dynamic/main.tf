@@ -1,16 +1,3 @@
-terraform {
-  cloud {
-    organization = "mullen-hashi"
-
-    workspaces {
-      # Fetch OIDC token from TFE workspace and use it to authenticate to GCP
-      #   for the default provider
-      name    = "gcp-oidc-impersonation-dynamic"
-      project = "tfe-gcp-oidc"
-    }
-  }
-}
-
 # use default providers credentials to impersonate
 provider "google" {
   alias = "ALIAS1"
